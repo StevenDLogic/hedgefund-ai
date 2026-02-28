@@ -1,470 +1,121 @@
-# 📊 Hedge Fund Tracker
+# hedgefund-ai
 
-[![repo views](https://komarev.com/ghpvc/?username=dokson&repo=hedge-fund-tracker&label=views&color=orange)](https://github.com/dokson/hedge-fund-tracker)
-[![repo size](https://img.shields.io/github/repo-size/dokson/hedge-fund-tracker)](https://github.com/dokson/hedge-fund-tracker/tree/master)
-[![last commit](https://img.shields.io/github/last-commit/dokson/hedge-fund-tracker)](https://github.com/dokson/hedge-fund-tracker/commits/master/)
-[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://www.python.org/downloads/release/python-3130/)
-[![License: MIT](https://img.shields.io/github/license/dokson/hedge-fund-tracker)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/dokson/hedge-fund-tracker.svg?style=social&label=Star)](https://github.com/dokson/hedge-fund-tracker/stargazers)
-[![GitHub watchers](https://img.shields.io/github/watchers/dokson/hedge-fund-tracker.svg)](https://github.com/dokson/hedge-fund-tracker/watchers)
-[![GitHub forks](https://img.shields.io/github/forks/dokson/hedge-fund-tracker.svg)](https://github.com/dokson/hedge-fund-tracker/network/members)
+An **AI-powered SaaS** platform designed to monitor and analyze hedge fund portfolios by parsing SEC filings. The system transforms raw 13F, 13D/G, and Form 4 data into actionable investment intelligence, leveraging multiple AI/ML models to surface promising stocks and portfolio trends.
 
-**If this tool is helping you, please ⭐ the repo!** It really helps discoverability.
+## Table of Contents
+1. [Overview](#overview)
+2. [Key Features](#key-features)
+3. [Getting Started](#getting-started)
+   - [Configuration](#configuration)
+   - [Running the Application](#running-the-application)
+4. [Usage Guide](#usage-guide)
+   - [Command Line Interface](#command-line-interface)
+   - [Data Update Workflow](#data-update-workflow)
+   - [AI Model Integration](#ai-model-integration)
+5. [Architecture](#architecture)
+6. [Deployment (SaaS)](#deployment-saas)
+7. [Contribution](#contribution)
+8. [License](#license)
 
-> **SEC 13F Filing Tracker | Institutional Portfolio Analysis | AI-Powered Stock Research**
+---
 
-A comprehensive **Python tool** for tracking **hedge fund portfolios** through **SEC filings** (13F, 13D/G, Form 4). Transform raw [SEC EDGAR](https://www.sec.gov/edgar) data into actionable **investment insights**. Built for **financial analysts**, **quantitative traders**, and **retail investors** seeking to analyze **institutional investor strategies**, **portfolio changes**, and discover **stock opportunities** by following elite fund managers.
+## Overview
+**hedgefund-ai** is a Python-based toolkit for tracking, analyzing, and interpreting institutional investment activity. By combining automated SEC scraping with advanced NLP/AI, the project provides:
 
-**Keywords**: SEC filings tracker, 13F analysis, hedge fund portfolio, institutional investors, stock research, investment intelligence, CUSIP converter, financial data scraper, AI stock analysis
+- A complete database of hedge fund filings (quarterly and non-quarterly)
+- Industry classification (GICS) for enhanced sector insights
+- Multi-model AI analysis for stock discovery and due diligence
+- Command-line interface suitable for integration into SaaS pipelines
 
-## ⫶☰ Table of Contents
-<!--ts-->
-* [📊 Hedge Fund Tracker](#-hedge-fund-tracker)
-  * [⫶☰ Table of Contents](#-table-of-contents)
-  * [🚀 Quick Start](#-quick-start)
-  * [✨ Key Features](#-key-features)
-  * [📦 Installation](#-installation)
-    * [Prerequisites](#prerequisites)
-    * [Data Management](#data-management)
-    * [Database Updater](#database-updater)
-    * [GICS Classification](#gics-classification)
-    * [API Configuration](#api-configuration)
-  * [📁 Project Structure](#-project-structure)
-  * [👨🏻‍💻 How This Tool Tracks Hedge Funds](#-how-this-tool-tracks-hedge-funds)
-  * [🏢 Hedge Funds Selection](#-hedge-funds-selection)
-    * [Selection Methodology](#selection-methodology)
-    * [List Management](#list-management)
-      * [Notable Exclusions](#notable-exclusions)
-      * [Adding Custom Funds](#adding-custom-funds)
-  * [🧠 AI Models Selection](#-ai-models-selection)
-    * [Adding Custom AI Models](#adding-custom-ai-models)
-  * [Limitations &amp; Considerations](#️-limitations--considerations)
-    * [A Truly Up-to-Date View](#a-truly-up-to-date-view)
-  * [⚙️ Automation with GitHub Actions](#️-automation-with-github-actions)
-    * [How It Works](#how-it-works)
-    * [How to Enable It](#how-to-enable-it)
-  * [🗃️ Technical Stack](#️-technical-stack)
-  * [🤝🏼 Contributing &amp; Support](#-contributing--support)
-    * [💬 Loved it? Help it grow](#-loved-it-help-it-grow)
-    * [✍🏻 Feedback](#-feedback)
-  * [📚 References](#-references)
-  * [🙏🏼 Acknowledgments](#-acknowledgments)
-  * [📄 License](#-license)
+## Key Features
+-  **Full SEC 13F / 13D/G / Form 4 coverage** with historical and live updates
+-  **AI-powered stock scoring** using customizable model providers (GitHub Models, Google Gemini, Hugging Face, etc.)
+-  **Industry context** via an internal GICS parser built from official standards
+-  **Ticker resolution** from CUSIP using intelligent fallbacks (yfinance  Finnhub  FinanceDatabase)
+-  **CSV-driven data management** for easy customization of funds and AI models
+-  **CLI menu system** allowing fund, quarter, or ticker-centric reports
+-  **Auto-update utilities** for sorting and maintaining dataset integrity
 
-<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
-<!--te-->
+## Getting Started
+Prepare your environment, install dependencies, and run the tool locally.
 
-## 🚀 Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/dokson/hedge-fund-tracker.git
+**Installation**
+Clone the repository and install required packages:
+`ash
+git clone <your-repo-url>
 cd hedge-fund-tracker
+pipenv install --dev
+# or, if using venv:
+# python -m pip install -r requirements.txt
+`
 
-# Install dependencies
-pipenv install
-
-# Set up environment variables
+### Configuration
+Copy and edit the environment template before running the application:
+`ash
 cp .env.example .env
-# Add your tokens/API keys (FinnHub, GitHub, Google AI Studio, Groq, HuggingFace, OpenRouter) to the .env file
-
-# Run the application
-pipenv run python -m app.main
-```
-
-## ✨ Key Features
-
-| Feature | Description |
-| --------- | ------------- |
-| **🆚 Comparative Analysis** | Combines quarterly (13F) and non-quarterly (13D/G, Form 4) filings for an up-to-date view |
-| **📋 Detailed Reports** | Generates clear, console-based reports with intuitive formatting |
-| **🗄️ Curated Database** | Includes list of top hedge funds and AI models, both easily editable via CSV files |
-| **🔍 Ticker Resolution** | Converts CUSIPs to tickers using a smart fallback system (yfinance, Finnhub, FinanceDatabase) |
-| **🤖 Multi-Provider AI Analysis** | Leverages different AI models to identify promising stocks based on filings |
-| **🔀 Flexible Management** | Offers multiple analysis modes: all funds, a single fund and also custom CIKs |
-| **⚙️ Automated Data Update** | Includes a GitHub Actions workflow to automatically fetch and commit the latest SEC filings |
-| **🗃️ GICS Hierarchy** | Features an autonomous parser to build a full [GICS](https://www.msci.com/indexes/index-resources/gics) classification database |
-
-## 📦 Installation
-
-### Prerequisites
-
-* [Python 3.13](https://www.python.org/downloads/release/python-3130/)+
-* [pipenv](https://pipenv.pypa.io/) (install with `pip install pipenv`)
-
-1. **📥 Clone and navigate:**
-
-   ```bash
-   git clone https://github.com/dokson/hedge-fund-tracker.git
-   cd hedge-fund-tracker
-   ```
-
-2. **📲 Install dependencies:** Navigate to the project root and run the following command. This will create a virtual environment and install all required packages.
-
-    ```bash
-    pipenv install
-    ```
-
-    > **💡 Tip:** If `pipenv` is not found, you might need to use `python -m pipenv install`. This can happen if the user scripts directory is not in your system's PATH.
-
-3. **🛠️ Configure environment:** Create a `.env` file in the root directory of the project and add your keys (Finnhub and Google API)
-
-    ```bash
-   # Create environment file
-   cp .env.example .env
-   
-   # Edit .env file and add your API keys:
-   # FINNHUB_API_KEY="your_finnhub_key"
-   # GITHUB_TOKEN="your_github_token"
-   # GOOGLE_API_KEY="your_google_api_key"
-   # GROQ_API_KEY="your_groq_api_key"
-   # HF_TOKEN="your_hugging_face_token"
-   # OPENROUTER_API_KEY="your_openrouter_api_key"
-   ```
-
-4. **▶️ Run the script:** Execute within the project's virtual environment:
-
-    ```bash
-    pipenv run python -m app.main
-    ```
-
-5. **📜 Choose an action:** Once the script starts, you'll see the main interactive menu for data analysis:
-
-    ```txt
-    ┌───────────────────────────────────────────────────────────────────────────────────┐
-    │                                 Hedge Fund Tracker                                │
-    ├───────────────────────────────────────────────────────────────────────────────────┤
-    │  0. Exit                                                                          │
-    │  1. View latest non-quarterly filings activity by funds (from 13D/G, Form 4)      │
-    │  2. Analyze overall hedge-funds stock trends for a quarter                        │
-    │  3. Analyze a specific fund's quarterly portfolio                                 │
-    │  4. Analyze a specific stock's activity for a quarter                             │
-    │  5. Run AI Analyst to find most promising stocks                                  │
-    │  6. Run AI Due Diligence on a stock                                               │
-    └───────────────────────────────────────────────────────────────────────────────────┘
-    ```
-
-### Data Management
-
-The data update operations (downloading and processing filings) are inside a dedicated script. This keeps the main application focused on analysis, while the updater handles populating and refreshing the database.
-
-To run the data update operations, you need to use the `updater.py` script from the project root:
-
-```bash
-pipenv run python -m database.updater
-```
-
-### Database Updater
-
-The `updater.py` script includes semi-automated maintenance tasks:
-
-* **Sorting**: Upon exit (option `0`), the script automatically sorts the `database/stocks.csv` file by ticker to maintain performance and prevent Git diff noise.
-* **Auto-Documentation**: This README's excluded funds section is synchronized whenever the database is refreshed manually.
-
-This will open a separate menu for data management:
-
-```txt
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                     Hedge Fund Tracker - Database Updater                     │
-├───────────────────────────────────────────────────────────────────────────────┤
-│  0. Exit                                                                      │
-│  1. Generate latest 13F reports for all known hedge funds                     │
-│  2. Fetch latest non-quarterly filings for all known hedge funds              │
-│  3. Generate 13F report for a known hedge fund                                │
-│  4. Manually enter a hedge fund CIK to generate a 13F report                  │
-└───────────────────────────────────────────────────────────────────────────────┘
-```
-
-### GICS Classification
-
-The project includes an **autonomous GICS (Global Industry Classification Standard) parser** (`database/gics/updater.py`). Originally developed by [MSCI](https://www.msci.com/) and [S&P](https://www.spglobal.com/), it scrapes Wikipedia to build a full hierarchy of 163 sub-industries. This provides the AI Analyst with granular industry context while remaining independent of third-party libraries.
-
-### API Configuration
-
-The tool can utilize API keys for enhanced functionality, but all are optional:
-
-| Service | Purpose | Get Free API Key |
-| --------- | --------- | ------------- |
-| **[![Finnhub](https://github.com/user-attachments/assets/94465a7f-75e0-4a21-827c-511540c80cb3)](https://finnhub.io/) [Finnhub](https://finnhub.io/)** | [CUSIP](https://en.wikipedia.org/wiki/CUSIP) to [stock ticker](https://en.wikipedia.org/wiki/Ticker_symbol) conversion | [Finnhub Keys](https://finnhub.io/dashboard) |
-| **[![GitHub Models](https://github.com/user-attachments/assets/3e8ca2f8-1bb0-4ec3-9374-d6106499adde)](https://github.com/marketplace/models) [GitHub Models](https://github.com/marketplace/models)** | Access to top-tier models (e.g., [xAI Grok-3](https://x.ai/news/grok-3), [OpenAI GPT-5](https://openai.com/en-US/gpt-5/), etc...) | [GitHub Tokens](https://github.com/settings/personal-access-tokens/new?description=Used+to+call+GitHub+Models+APIs+to+easily+run+LLMs%3A+https%3A%2F%2Fdocs.github.com%2Fgithub-models%2Fquickstart%23step-2-make-an-api-call&name=GitHub+Models+token&user_models=read) |
-| **[![Google AI Studio](https://github.com/user-attachments/assets/3b351d8e-d7f6-4337-9c2f-d2af77f30711)](https://aistudio.google.com/) [Google AI Studio](https://aistudio.google.com/)** | Access to [Google Gemini](https://gemini.google.com/) models | [AI Studio Keys](https://aistudio.google.com/app/apikey) |
-| **[![Groq AI](https://github.com/user-attachments/assets/c56394b5-79f8-4c25-a24a-2e2a8bde829c)](https://console.groq.com/) [Groq AI](https://console.groq.com/)** | Access to various LLMs (e.g., OpenAI [gpt-oss](https://github.com/openai/gpt-oss), Meta [Llama](https://www.llama.com/), etc...) | [Groq Keys](https://console.groq.com/keys) |
-| **[![Hugging Face](https://github.com/user-attachments/assets/b4f22e8b-6c6e-4e28-91ca-e2bc9b89837f)](https://huggingface.co/) [Hugging Face](https://huggingface.co/)** | Access to open weights models (e.g., [DeepSeek R1](https://huggingface.co/deepseek-ai/DeepSeek-R1), [Kimi-Linear-48B](https://huggingface.co/moonshotai/Kimi-Linear-48B-A3B-Instruct), etc...) | [HF Tokens](https://huggingface.co/settings/tokens) |
-| **[![OpenRouter](https://github.com/user-attachments/assets/0aae7c70-d6ab-4166-8052-d4b9e06b9bb3)](https://openrouter.ai/) [OpenRouter](https://openrouter.ai/)** | Access to various LLMs (e.g., [Claude 4.5 Opus](https://www.anthropic.com/news/claude-4-5-opus), [GLM 4.5 Air](https://chatglm.cn/), etc...) | [OpenRouter Keys](https://openrouter.ai/settings/keys) |
-
-> **💡 Note:** Ticker resolution primarily uses [yfinance](https://github.com/ranaroussi/yfinance), which is free and requires no API key. If that fails, the system falls back to [Finnhub](https://finnhub.io/) (if an API key is provided), with the final fallback being [FinanceDatabase](https://github.com/JerBouma/FinanceDatabase/).
->
-> **💡 Note:** You don't need to use all the APIs. For the generative AI models ([Google AI Studio](https://aistudio.google.com/), [GitHub Models](https://github.com/marketplace/models), [Groq AI](https://console.groq.com/), [Hugging Face](https://huggingface.co/models), and [OpenRouter](https://openrouter.ai/)), you only need the API keys for the services you plan to use.
-> For instance, if you want to experiment with models like [OpenAI](https://openai.com/) [GPT-4o mini](https://platform.openai.com/docs/models/gpt-4o-mini), you just need a [GitHub Token](https://github.com/settings/tokens). Experimenting with different models is encouraged, as the quality of AI-generated analysis, both for identifying promising stocks and for conducting due diligence, can vary. However, top-performing stocks are typically identified consistently across all tested models. **All APIs used in this project are currently free (with GitHub Models providing a generous free tier for developers).**
-
-## 📁 Project Structure
-
-```plaintext
-hedge-fund-tracker/
-├── 📁 .github/
-│   ├── 📁 scripts/
-│   │   └── 🐍 fetcher.py           # Daily script for data fetching (scheduled by workflows/daily-fetch.yml)
-│   └── 📁 workflows/                # GitHub Actions for automation
-│       ├── ⚙️ filings-fetch.yml    # GitHub Actions: Filings fetching job
-│       └── ⚙️ python-tests.yml     # GitHub Actions: Unit tests
-├── 📁 app/                          # Main application logic
-│   └── ▶️ main.py                  # Main entry point for Data & AI analysis
-├── 📁 database/                     # Data storage
-│   ├── 📁 2025Q1/                  # Quarterly reports
-│   │   ├── 📊 fund_1.csv           # Individual fund quarterly report
-│   │   ├── 📊 fund_2.csv
-│   │   └── 📊 fund_n.csv
-│   ├── 📁 YYYYQN/
-│   ├── 📁 GICS/
-│   │   ├── 🗃️ hierarchy.csv        # Full GICS hierarchy
-│   │   └── ▶️ updater.py           # GICS updater script
-│   ├── 📝 hedge_funds.csv          # Curated hedge funds list -> EDIT THIS to add or remove funds to track
-│   ├── 📝 models.csv               # LLMs list to use for AI Financial Analyst -> EDIT THIS to add or remove AI models
-│   ├── 📊 non_quarterly.csv        # Stores latest 13D/G and Form 4 filings
-│   ├── 📊 stocks.csv               # Master data for stocks (CUSIP-Ticker-Name)
-│   └── ▶️ updater.py               # Main entry point for updating the database
-├── 📁 tests/                        # Test suite
-├── 📝 .env.example                 # Template for your API keys
-├── ⛔ .gitignore                   # Git ignore rules
-├── 🧾 LICENSE                      # MIT License
-├── 🛠️ Pipfile                      # Project dependencies
-├── 🔏 Pipfile.lock                 # Locked dependency versions
-└── 📖 README.md                    # Project documentation (this file)
-```
-
-> **📝 Hedge Funds Configuration File:** `database/hedge_funds.csv` contains the list of hedge funds to monitor (CIK, name, manager) and can also be edited at runtime.
->
-> **📝 LLMs Configuration File:** `database/models.csv` contains the list of available LLMs for AI analysis and can also be edited at runtime.
-
-## 👨🏻‍💻 How This Tool Tracks Hedge Funds
-
-This tracker leverages the following types of SEC filings to provide a comprehensive view of institutional activity.
-
-* **📅 Quarterly 13F Filings**
-  * Required for funds managing $100M+
-  * Filed ***within 45 days*** of quarter-end
-  * Shows ***portfolio snapshot*** on last day of quarter
-
-* **📝 Non-Quarterly 13D/G Filings**
-  * Required when acquiring 5%+ of company shares
-  * Filed ***within 10 days*** of the transaction
-  * Provides a ***timely view*** of significant investments
-
-* **✍🏻 Non-Quarterly SEC Form 4 Insider Filings**
-  * Filed by insiders (executives, directors) or large shareholders (>10%) when they trade company stocks
-  * Must be filed ***within 2 business days*** of the transaction
-  * Offers ***real-time insight*** into the actions of key individuals and institutions
-
-## 🏢 Hedge Funds Selection
-
-This tool tracks a curated list of **what I found to be the top-performing institutional investors that file with the U.S. SEC**, *identified* based on their performance over the last 3-5 years. This **curation** is the result of my own **methodology** designed to identify the **top percentile of global investment funds**. My *selection methodology* is detailed below.
-
-### Selection Methodology
-
-[Modern portfolio theory (MPT)](https://en.wikipedia.org/wiki/Modern_portfolio_theory) offers many methods for quantifying the [risk-return trade-off](https://en.wikipedia.org/wiki/Risk%E2%80%93return_spectrum), but they are often ill-suited for analyzing the limited data available in public filings. Consequently, the `hedge_funds.csv` was therefore generated using my own custom *selection algorithm* designed to identify top-performing funds while managing for [volatility](https://en.wikipedia.org/wiki/Volatility_(finance)).
-
-> **Note**: The selection algorithm is external to this project and was used only to produce the curated `hedge_funds.csv` list.
-
-My approach prioritizes high [cumulative returns](https://en.wikipedia.org/wiki/Rate_of_return) but also analyzes the path taken to achieve them: it penalizes [volatility](https://en.wikipedia.org/wiki/Volatility_(finance)), similar to the [Sharpe Ratio](https://en.wikipedia.org/wiki/Sharpe_ratio), but this penalty is dynamically adjusted based on performance consistency; likewise, [drawdowns](https://en.wikipedia.org/wiki/Drawdown_(economics)) are penalized, echoing the principle of the [Sterling Ratio](https://en.wikipedia.org/wiki/Sterling_ratio), but the penalty is intentionally dampened to avoid overly punishing funds that recover effectively from temporary downturns.
-
-### List Management
-
-The list of hedge funds is actively managed to maintain its quality; funds that underperform may be replaced, while new top performers are periodically added.
-
-However, despite their strong performance, several funds with portfolios predominantly focused on **Healthcare** and **Biotech**, such as **[Nextech Invest](https://www.nextechinvest.com/)**, **[Enavate Sciences](https://enavatesciences.com/)**, **[Caligan Partners](https://www.caliganpartners.com/)**, and **[Boxer Capital Management](https://www.boxercap.com/)**, have been intentionally excluded. These funds invest in highly specialized sectors where I lack the necessary expertise. Consequently, I consider them too risky for my personal investment profile, given the complexity and volatility inherent in biotech and healthcare ventures.
-
-#### Notable Exclusions
-
-The quality of the output analysis is directly tied to the quality of the input data. To enhance the accuracy of the insights and opportunities identified, many popular high-profile funds have been intentionally excluded by design (the list below is automatically managed and capped to 50 funds, but you can see the full list in `excluded_hedge_funds.csv`):
-
-<!-- EXCLUDED_FUNDS_LIST_START -->
-* *Warren Buffett*'s [Berkshire Hathaway](https://www.berkshirehathaway.com/)
-* *Ken Griffin*'s [Citadel Advisors](https://www.citadel.com/)
-* *Ray Dalio*'s [Bridgewater Associates](https://www.bridgewater.com/)
-* *Michael Burry*'s [Scion Asset Management](https://www.scionasset.com/)
-* *Peter Thiel*'s [Thiel Macro](https://www.linkedin.com/company/thiel-macro)
-* *Cathie Wood*'s [ARK Invest](https://www.ark-invest.com/)
-* *Bill Ackman*'s [Pershing Square](https://pershingsquareholdings.com/)
-* *Dmitry Balyasny*'s [Balyasny Asset Management](https://www.bamfunds.com/)
-* *Alec Litowitz*'s [Magnetar Capital](https://www.magnetar.com/)
-* *Cliff Asness*'s [AQR Capital Management](https://www.aqr.com/)
-* *David Tepper*'s [Appaloosa](https://www.appaloosawm.com/)
-* *Israel Englander*'s [Millennium Management](https://www.mlp.com/)
-* *Frank Sands*'s [Sands Capital Management](https://www.sandscapital.com/)
-* *Murray Stahl*'s [Horizon Kinetics](https://horizonkinetics.com/)
-* *Edward Mule*'s [Silver Point Capital](https://www.silverpointcapital.com/)
-* *David Abrams*'s [Abrams Capital Management](https://www.abramscapital.com/)
-* *Jeffrey Ubben*'s [ValueAct Capital](https://valueact.com/)
-* *Paul Singer*'s [Elliott Investment](https://www.elliottmgmt.com/)
-* *Chris Hohn*'s [The Children's Investment](https://ciff.org/)
-* *Daniel Loeb*'s [Third Point](https://www.thirdpoint.com/)
-* *Boaz Weinstein*'s [Saba Capital](https://www.sabacapital.com/)
-* *William Huffman*'s [Nuveen](https://www.nuveen.com/)
-* *George Soros*'s [Soros Fund Management](https://sorosfundmgmt.com/)
-* *Bill Gates*'s [Gates Foundation Trust](https://www.gatesfoundation.org/about/financials/foundation-trust)
-* *Carl Icahn*'s [Icahn Enterprises](https://www.ielp.com/)
-* *Dev Kantesaria*'s [Valley Forge Capital Management](https://www.valleyforgecapital.com/)
-* *Lewis Sanders*'s [Sanders Capital](https://www.sanderscapital.com/)
-* *Brad Gerstner*'s [Altimeter Capital Management](https://www.altimeter.com/)
-* *Andreas Halvorsen*'s [Viking Global Investors](https://vikingglobal.com/)
-* *Paul Tudor Jones*'s [Tudor Investment Corporation](https://www.tudorfunds.com/)
-* *Chris Davis*'s [Davis Advisors](https://davisfunds.com/)
-* *Paul Isaac*'s [Arbiter Partners](https://arbiterpartners.net/)
-* *Robert Robotti*'s [Robotti Value Investors](https://www.robotti.com/)
-* *Jim Cracchiolo*'s [Ameriprise Financial](https://www.ameriprise.com/)
-* *Li Lu*'s [Himalaya Capital Management](https://www.himcap.com/)
-* *Francis Chou*'s [Chou Associates](https://www.choufunds.com/)
-* *Anand Parekh*'s [Alyeska Investment Group](https://alyeskagroup.com/)
-* *Ken Fisher*'s [Fisher Asset Management](https://www.fisherinvestments.com/)
-* *David Katz*'s [Matrix Asset Advisors](https://matrixassetadvisors.com/)
-* *Lee Ainslie*'s [Maverick Capital](https://www.maverickcap.com/)
-* *Joel Greenblatt*'s [Gotham Funds](https://www.gothamfunds.com/)
-* *Barry Ritholtz*'s [Ritholtz Wealth Management](https://www.ritholtzwealth.com/)
-* *Robert Pitts*'s [Steadfast Capital Management](https://www.steadfast.com/)
-* *John Paulson*'s [Paulson & Co.](https://paulsonco.com/)
-* *Jeremy Grantham*'s [GMO](https://www.gmo.com/)
-* *Paul Marshall & Ian Wace*'s [Marshall Wace](https://www.mwam.com/)
-* *Seymour Kaufman*'s [Crosslink Capital](https://www.crosslinkcapital.com/)
-* *Mario Gabelli*'s [GAMCO Investors](https://gabelli.com/)
-* *John Overdeck*'s [Two Sigma](https://www.twosigma.com/)
-* *Richard Pzena*'s [Pzena Investment Management](https://www.pzena.com/)
-* and many more... (see [`database/excluded_hedge_funds.csv`](/database/excluded_hedge_funds.csv) for the full list)
-<!-- EXCLUDED_FUNDS_LIST_END -->
-
-> **💡 Note**: For convenience, key information for these funds, including their CIKs, is maintained in the `database/excluded_hedge_funds.csv` file.
-
-#### Adding Custom Funds
-
-Want to track additional funds? Simply edit `database/hedge_funds.csv` and add your preferred institutional investors. For example, to add [Berkshire Hathaway](https://www.berkshirehathaway.com/), [Pershing Square](https://pershingsquareholdings.com/) and [ARK-Invest](https://www.ark-invest.com/), you would add the following lines:
-
-```csv
-"CIK","Fund","Manager","Denomination","CIKs"
-...
-"0001067983","Berkshire Hathaway","Warren Buffett","Berkshire Hathaway Inc",""
-"0001336528","Pershing Square","Bill Ackman","Pershing Square Capital Management, L.P.",""
-"0001697748","ARK Invest","Cathie Wood","ARK Investment Management LLC",""
-```
-
-> **💡 Note**: `hedge_funds.csv` currently includes **not only *traditional hedge funds*** but also **other institutional investors** *(private equity funds, large banks, VCs, pension funds, etc., that file 13F to the [SEC](http://sec.gov/))* selected from what I consider the **top 5%** of performers.
->
-> If you wish to track any of the **Notable Exclusions** hedge funds, you can copy the relevant rows from `excluded_hedge_funds.csv` into `hedge_funds.csv`.
->
-> **Columns for Custom Funds:**
->
-> * **`Denomination`**: This is the exact legal name used by the fund in its filings. It is **essential** for accurately processing non-quarterly filings (13D/G, Form 4) as the scraper uses it to identify the fund's specific transactions within complex filing documents.
-> * **`CIKs`**: A comma-separated list of additional CIKs. This field is used to track filings from related entities or subsidiaries. Some investment firms have complex structures where different legal entities file separately (e.g., a management company and a holding company).
->   * *Example:* [Jeffrey Ubben](https://en.wikipedia.org/wiki/Jeffrey_W._Ubben)'s `ValueAct Holdings` (`CIK` = `0001418814`) also has filings under `ValueAct Capital Management` (`CIK` = `0001418812`). By adding `0001418812` to the `CIKs` column, the tool aggregates **non-quarterly filings** from both entities for a complete view.
->
-> ```csv
->"CIK","Fund","Manager","Denomination","CIKs"
->"0001418814","ValueAct","Jeffrey Ubben","ValueAct Holdings, L.P.","0001418812"
-> ```
-
-## 🧠 AI Models Selection
-
-The **AI Financial Analyst**'s primary goal is to identify stocks with the highest growth potential based on hedge fund activity. It achieves this by calculating a **"Promise Score"** for each stock. This score is a weighted average of various metrics derived from 13F filings. The AI's first critical task is to act as a strategist, dynamically defining the heuristic by assigning the optimal weights for these metrics based on the market conditions of the selected quarter. Its second task is to provide quantitative scores (e.g., momentum, risk) for the top-ranked stocks.
-
-The models included in `database/models.csv` have been selected because they have demonstrated the best performance and reliability for these specific tasks. Through experimentation, they have proven effective at interpreting the prompts and providing insightful, well-structured responses.
-
-> **💡 Note** on Meta's [`llama-3.3-70b-versatile`](https://github.com/meta-llama/llama-models/blob/main/models/llama3_3/MODEL_CARD.md): while it can occasionally be less precise in defining the heuristic for the "Promise Score" compared to other top-tier models, it remains a valuable option. Its exceptional speed and lightweight nature make it ideal for rapid experimentation and iterative analysis, providing a useful trade-off between accuracy and performance. As the AI landscape evolves, it is expected that this model will eventually be replaced by newer alternatives that offer similar or better speed and efficiency.
->
-> **💡 Note** on [xAI's Grok-3](https://x.ai/blog/grok-3): This tool now supports [GitHub Models](https://github.com/marketplace/models), which provides access to **Grok-3** and other next-generation models like **GPT-5** and **Llama 4**. This integration allows for state-of-the-art financial reasoning and due diligence directly through your GitHub account.
->
-> **💡 Note** on [OpenRouter](https://openrouter.ai/): OpenRouter was initially included because it offered free access to top-tier models; while some are no longer free, you can still use it with this tool if you have an existing API key.
-
-### Adding Custom AI Models
-
-You can easily add or change the AI models used for analysis by editing the `database/models.csv` file. This allows you to experiment with different Large Language Models (LLMs) from supported providers.
-
-To add a new model, open `database/models.csv` and add a new row with the following columns:
-
-* **ID**: The specific model identifier as required by the provider's API.
-* **Description**: A brief, user-friendly description that will be displayed in the selection menu.
-* **Client**: The provider of the model. Must be one of `GitHub`, `Google`, `Groq`, `HuggingFace`, or `OpenRouter`.
-
-Here are the official model lists for each provider:
-
-* [GitHub Models](https://github.com/marketplace/models)
-* [Google Gemini Models](https://ai.google.dev/gemini-api/docs/models)
-* [Groq Models](https://console.groq.com/docs/models)
-* [HuggingFace Models](https://huggingface.co/models)
-* [OpenRouter Free Models](https://openrouter.ai/models?order=newest&max_price=0)
-
-## ⚠️ Limitations & Considerations
-
-It's crucial to understand the inherent limitations of tracking investment strategies solely through SEC filings:
-
-| Limitation | Impact | Mitigation |
-| ------------ | -------- | ------------ |
-| **🕒 Filing Delay** | Data can be 45+ days old | Focus on long-term strategies |
-| **🧩 Incomplete Picture** | Only US long positions shown | Use as part of broader analysis |
-| **📉 No Short Positions** | Missing hedge information | Consider reported positions carefully |
-| **🌎 Limited Scope** | No non-US stocks or other assets | Supplement with additional data |
-
-### A Truly Up-to-Date View
-
-Many tracking websites rely solely on quarterly 13F filings, which means their data can be over 45 days old and miss many significant trades. Non-quarterly filings like 13D/G and Form 4 are often ignored because they are more complex to process and merge.
-
-This tracker helps overcome that limitation by **integrating multiple filing types**. When analyzing the most recent quarter, the tool automatically incorporates the latest data from 13D/G and Form 4 filings. As a result, the holdings, deltas, and portfolio percentages reflect not just the static 13F snapshot, but also any significant trades that have occurred since. This provides a more dynamic and complete picture of institutional activity.
-
-## ⚙️ Automation with GitHub Actions
-
-This repository includes a [GitHub Actions](https://github.com/features/actions) workflow (`.github/workflows/filings-fetch.yml`) designed to keep your data effortlessly up-to-date by automatically fetching the latest SEC filings.
-
-### How It Works
-
-* **Scheduled Runs**: The workflow runs automatically to check for **new 13F, 13D/G, and Form 4 filings** from the funds you are tracking (`hedge_funds.csv`). It runs four times a day from Monday to Friday (at 01:30, 13:30, 17:30, and 21:30 UTC) and once on Saturday (at 04:00 UTC).
-* **Safe Branching Strategy**: Instead of committing directly to your main branch, the workflow pushes all new data to a dedicated branch named `automated/filings-fetch`.
-* **User-Controlled Merging**: This approach gives you full control. You can review the changes committed by the bot and then merge them into your main branch whenever you're ready. This prevents unexpected changes and allows you to manage updates at your own pace.
-* **Automated Alerts**: If the script encounters a non-quarterly filing where it cannot identify the fund owner based on your `hedge_funds.csv` configuration, it will automatically open a GitHub Issue in your repository, alerting you to a potential data mismatch that needs investigation.
-
-### How to Enable It
-
-1. **Fork the Repository**: Create your own [fork of this project](https://github.com/dokson/hedge-fund-tracker/fork) on GitHub.
-2. **Enable Actions**: GitHub Actions are typically enabled by default on forked repositories. You can verify this under the *Actions* tab of your fork.
-3. **Configure Secrets**: For the workflow to resolve tickers and create issues, you need to add your API keys as repository secrets. In your forked repository, you must add your `FINNHUB_API_KEY` as a repository secret. Go to `Settings` > `Secrets and variables` > `Actions` in your forked repository to add it.
-
-## 🗃️ Technical Stack
-
-| 🗂️ Category | 🦾 Technology |
-| ---------- | ------------ |
-| **Core** | [Python 3.13](https://www.python.org/downloads/release/python-3130/)+, [pipenv](https://pipenv.pypa.io/) |
-| **Web Scraping** | [Requests](https://2.python-requests.org/en/master/), [Beautiful Soup](https://pypi.org/project/beautifulsoup4/), [lxml](https://lxml.de/) |
-| **Reliability** | [Tenacity](https://github.com/jd/tenacity) (Smart retries for API rate-limiting and AI responses) |
-| **Config** | [python-dotenv](https://github.com/theskumar/python-dotenv) |
-| **Data Processing** | [pandas](https://pandas.pydata.org/), [csv](https://docs.python.org/3/library/csv.html) |
-| **Stocks Libraries** | [Finnhub-Stock-API](https://github.com/Finnhub-Stock-API/finnhub-python), [FinanceDatabase](https://github.com/JerBouma/FinanceDatabase/) |
-| **Gen AI** | [python-toon](https://github.com/xaviviro/python-toon), [Google Gen AI SDK](https://googleapis.github.io/python-genai/), [OpenAI](https://github.com/openai/openai-python) |
-
-## 🤝🏼 Contributing & Support
-
-### 💬 Loved it? Help it grow
-
-* **🐛 [Bug Reports](https://github.com/dokson/hedge-fund-tracker/issues/new?template=bug_report.md)**
-* **🆕 [Feature Requests](https://github.com/dokson/hedge-fund-tracker/issues/new?template=feature_request.md)**
-* **🔀 [Fork & PR](https://github.com/dokson/hedge-fund-tracker/fork)**
-* **🔁 [Share on X](https://x.com/intent/post?text=Have%20a%20look%20at%20https%3A%2F%2Fgithub.com%2Fdokson%2Fhedge-fund-tracker%2F%20by%20%40alecolace) or [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/dokson/hedge-fund-tracker/)**
-
-### ✍🏻 Feedback
-
-This tool is in active development, and your input is valuable.
-If you have any suggestions or ideas for new features, please feel free to [get in touch](https://github.com/dokson).
-
-## 📚 References
-
-* [SEC Developer Resources](https://www.sec.gov/about/developer-resources)
-* [SEC: Frequently Asked Questions About Form 13F](https://www.sec.gov/rules-regulations/staff-guidance/division-investment-management-frequently-asked-questions/frequently-asked-questions-about-form-13f)
-* [SEC: Guidance on Beneficial Ownership Reporting (Sections 13D/G)](https://www.sec.gov/rules-regulations/staff-guidance/compliance-disclosure-interpretations/exchange-act-sections-13d-13g-regulation-13d-g-beneficial-ownership-reporting)
-* [Wikipedia: Global Industry Classification Standard](https://en.wikipedia.org/wiki/Global_Industry_Classification_Standard)
-* [MSCI: Global Industry Classification Standard (GICS)](https://www.msci.com/indexes/index-resources/gics)
-* [S&P Global: GICS Structure & Methodology](https://www.spglobal.com/spdji/en/documents/methodologies/methodology-gics.pdf)
-* [CUSIP (Committee on Uniform Security Identification Procedures)](https://en.wikipedia.org/wiki/CUSIP)
-* [Modern Portfolio Theory (MPT)](https://en.wikipedia.org/wiki/Modern_portfolio_theory)
-
-## 🙏🏼 Acknowledgments
-
-This project began as a fork of [sec-web-scraper-13f](https://github.com/CodeWritingCow/sec-web-scraper-13f) by [Gary Pang](https://github.com/CodeWritingCow). The original tool provided a solid foundation for scraping 13F filings from the [SEC](http://sec.gov/)'s [EDGAR](https://www.sec.gov/edgar/searchedgar/companysearch.html) database. It has since been significantly re-architected and expanded into a comprehensive analysis platform, incorporating multiple filing types, AI-driven insights, and automated data management.
-
-## 📄 License
-
-This project is released under the MIT License, an open-source license that grants you the freedom to use, modify, and distribute the software. For the full terms, please see the [LICENSE](LICENSE) file.
+# edit .env to include any API keys you intend to use
+# FINNHUB_API_KEY, GITHUB_TOKEN, GOOGLE_API_KEY, GROQ_API_KEY, HF_TOKEN, OPENROUTER_API_KEY
+`
+API keys are optional; the system functions with yfinance for most operations, but certain features (e.g. multiple AI providers or CUSIP lookups) work better with valid tokens.
+
+### Running the Application
+Activate the virtual environment, then launch the CLI:
+`ash
+pipenv shell           # enter the pipenv environment
+python -m app.main     # start the interactive menu
+`
+
+Upon startup, you'll be presented with analysis options such as viewing recent filings, quarter summaries, individual fund/stock reports, or invoking the AI analyst.
+
+## Usage Guide
+### Command Line Interface
+The main menu offers numeric commands:
+`
+0. Exit
+1. View latest non-quarterly filings activity (13D/G, Form 4)
+2. Analyze overall hedge-funds stock trends for a quarter
+3. Analyze a specific fund's quarterly portfolio
+4. Analyze a specific stock's activity for a quarter
+5. Run AI Analyst to find most promising stocks
+6. Run AI Due Diligence on a stock
+`
+Follow prompts to select funds, quarters, or tickers; the output is formatted for readability.
+
+### Data Update Workflow
+Use the updater script to refresh datasets:
+`ash
+python -m database.updater
+`
+The updater menu enables bulk or individual 13F generation and non-quarterly filing retrieval. It also automatically sorts database/stocks.csv and syncs documentation.
+
+### AI Model Integration
+AI configuration is driven by CSV files under database/ and prompts in pp/ai/prompts. You can add or swap models by editing models.csv and providing corresponding API credentials in .env.
+
+## Architecture
+- **app/**  core logic, CLI, AI agents
+- **analysis/**  financial evaluation modules
+- **database/**  CSV data, updater tools, GICS parsing
+- **scraper/**  EDGAR and XML scraping utilities
+- **stocks/**  price fetchers, ticker resolvers, 3rd-party clients
+- **utils/**  generic helpers for console, database, and string operations
+
+## Deployment (SaaS)
+This project is designed for easy containerization. Typical steps:
+
+1. Create a Dockerfile using the Python base image
+2. Mount or provision persistent storage for database/
+3. Supply .env via environment variables or secret store
+4. Iterate with a CI/CD pipeline to periodically run the updater and commit changes
+
+> _Details coming soon_: future updates will include a Helm chart and sample docker-compose configuration.
+
+## Contribution
+Contributions are welcome! Please:
+- Fork the repository and create a topic branch
+- Adhere to lack formatting and run existing tests
+- Submit PRs with clear descriptions and reference any related issues
+
+For major changes or ideas, open an issue first so we can discuss design implications.
+
+## License
+Released under the **MIT License**  see [LICENSE](LICENSE) for details.
